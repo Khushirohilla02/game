@@ -6,19 +6,21 @@ const context = canvas.getContext("2d");
 canvas.style.backgroundImage = "url('../images/background.png')";
 
 //PLAYER CREATION CLASS
+let newoffset=0;
 let offset = 0;
 let gravity = 0.5;
 class Platform {
-  constructor(x, y, width, height) {
+  constructor(x, y, width, height,image) {
     this.position = { x: x, y: y };
     this.width = width;
     this.height = height;
+    this.image = image;
 
   }
   draw() {
-    context.fillStyle = "black";
+    //context.fillStyle = "black";
     //context.fillRect(this.position.x, this.position.y, this.width, this.height);
-    context.drawImage(platformImage,this.position.x,this.position.y)
+   context.drawImage(this.image,this.position.x,this.position.y);
   }
 }
 class Player {
@@ -29,38 +31,40 @@ class Player {
     this.height = 30;
   }
   draw() {
-     /*if (this.velocity.x == 0 && this.velocity.y == 0) {
+ /* if (this.velocity.x == 0 && this.velocity.y == 0) {
         context.drawImage(imgStandR, 0, 0,174,400,this.x,this.y,this.width,this.height );
  }
-    if (this.velocity.x > 0) { context.drawImage(imgMoveR,   0,  0,   340,  400,  this.x, this.y, this.width, this.height);}*/
- //if (this.velocity.x < 0) {  context.drawImage(   imgMoveL,
-    //     0,
-    //     0,
-    //     340,
-    //     400,
-    //     this.x,
-    //     this.y,
-    //     this.width,
-    //     this.height
-    //   );
-    // }
-    // if (this.velocity.x == 0 && this.velocity.y == 0) {
-    //   context.drawImage(
-    //     imgStandL,
-    //     0,
-    //     0,
-    //     174,
-    //     400,
-    //     this.x,
-    //     this.y,
-    //     this.width,
-    //     this.height
-    //   );
-    // }
-    context.fillStyle = "red";
-    context.fillRect(this.position.x,this.position.y,this.width,this.height);
+    if (this.velocity.x > 0) { context.drawImage(imgMoveR,   0,  0,   340,  400,  this.x, this.y, this.width, this.height);}
+ if (this.velocity.x < 0) {  context.drawImage(   imgMoveL,    0,
+      0,
+        340,
+        400,
+        this.x,
+        this.y,
+        this.width,
+        this.height
+      );
+    }
+    if (this.velocity.x == 0 && this.velocity.y == 0) {
+      context.drawImage(
+        imgStandL,
+        0,
+        0,
+        174,
+        400,
+        this.x,
+        this.y,
+        this.width,
+        this.height
+      );*/
+
+    //context.fillStyle = "red";
+    context.fillRect(this.position.x+newoffset,this.position.y,this.width,this.height);
   }
-  update() {
+
+  update() 
+  {
+  
     if (this.position.y + this.height + this.velocity.y >= canvas.height) {
       this.velocity.y = 0;
     } else {
@@ -72,18 +76,29 @@ class Player {
 (this.position.y+this.height+this.velocity.y)>=platform.position.y&&
     (this.position.y+this.height+this.velocity.y)<this.position.y+20)
     */
-   let flag=0;
+  
     for (let i = 0; i < platforms.length; i++) {
 
       if (
-        this.position.x >= platforms[i].position.x &&
-        this.position.x + this.width-20<=
-          platforms[i].position.x + platforms[i].width &&
-        this.position.y + this.height+this.velocity.y>= platforms[i].position.y &&
-        this.position.y + this.height+this.velocity.y<= platforms[i].position.y+11
-      ) {
+        (this.position.x >= platforms[i].position.x) &&
+        (this.position.x + this.width-20<=
+          platforms[i].position.x + platforms[i].width) &&
+       (this.position.y + this.height+this.velocity.y>=platforms[i].position.y )&&
+        (this.position.y + this.height<=platforms[i].position.y+platforms[i].height)&&(this.position.y=platforms[i].position.y-this.height)
+       )
+       {
       this.velocity.y=0;
       }
+      if((this.position.x+this.width+this.velocity.x>=platforms[i].position.x)&&
+        (this.position.x<=platforms[i].position.x+platforms[i].width)&&
+      (this.position.y+this.height>=platforms[i].position.y)&&
+      (this.position.y<=platforms[i].position.y+platforms[i].height))
+    
+{
+  this.velocity.x=0;
+}
+    
+      
       
       
       
@@ -91,9 +106,9 @@ class Player {
     }
 
     //HORIZONTAL STOP LOGIC
-    /*if((this.position.x+this.width)>=platforms[i].position.x&&
-this.position.y>=platforms[i].position.y&&
-this.position.y<platforms[i].position.y+platforms[i].height)
+   /*if((this.position.x+this.width)>=platforms[i].position.x&&
+this.position.y<=platforms[i].position.y&&
+this.position.y>=platforms[i].position.y+platforms[i].height)
 {
     this.velocity.x=0;
 }*/
@@ -105,7 +120,7 @@ this.position.y<platforms[i].position.y+platforms[i].height)
 
     this.draw();
   }
-}
+} 
 function moveoffset(x) {
   offset = x;
 }
@@ -119,17 +134,19 @@ const imgMoveR = new Image();
 const imgMoveL = new Image();
 const backImage = new Image();
 const platformImage = new Image();
+const platformSmallImage=new Image();
 total = 6;
-// imgStandR.src = "images/spritesStandRight.png";
-// imgStandL.src = "images/spritesStandLeft.png";
-// imgMoveR.src = "images/spritesRunRight.png";
-// imgStandL.src = "images/spritesRunLeft.png";
+imgStandR.src = "images/spritesStandRight.png";
+ imgStandL.src = "images/spritesStandLeft.png";
+ imgMoveR.src = "images/spritesRunRight.png";
+ imgStandL.src = "images/spritesRunLeft.png";
 
 backImage.src = "../images/hills.png";
 
 
 
  platformImage.src = "../images/platform.png";
+ platformSmallImage.src="../images/platformSmallTall.png";
 
 imgStandL.onload = picture;
 imgStandR.onload = picture;
@@ -143,16 +160,21 @@ function picture() {
   }
 }
 
-const platform=new Platform(0,canvas.height-platformImage.height,platformImage.width,20);
+
+const platform=new Platform(0,canvas.height-platformImage.height,platformImage.width,platformImage.height,platformImage);
 platform.draw();
-const platform1=new Platform(500,canvas.height-platformImage.height,100,20);
+const platform1=new Platform(platformImage.width-1,canvas.height-platformImage.height,platformImage.width,platformImage.height,platformImage);
 platform1.draw();
-const platform2=new Platform(1100 ,canvas.height-platformImage.height,100,20);
+const platform2=new Platform(platformImage.width*2+120,canvas.height-platformImage.height,platformImage.width,platformImage.height,platformImage);
 platform2.draw();
+const platform3=new Platform(600,165,platformSmallImage.width,platformSmallImage.height,platformSmallImage);
+platform3.draw();
 platforms.push(platform);
 platforms.push(platform1);
 platforms.push(platform2);
-console.log(platforms.length)
+platforms.push(platform3);
+
+//console.log(platforms.length)
 const player = new Player();
 player.draw();
 
@@ -165,7 +187,7 @@ function gameAnimation() {
 
   //  platform.draw();
   // platform1.draw();
-  //startposition = startposition + offset;
+  startposition = startposition + offset;
   context.drawImage(backImage, startposition, 0);
  
   for (let i = 0; i < platforms.length; i++) {
@@ -190,7 +212,7 @@ addEventListener("keydown", function (e) {
 
     moveoffset(5);
   }
-});
+})
 addEventListener("keyup", function (e) {
   if (e.key == "ArrowRight") {
     player.velocity.x = 0;
@@ -201,4 +223,4 @@ addEventListener("keyup", function (e) {
     player.velocity.x = 0;
     moveoffset(0);
   }
-});
+})
